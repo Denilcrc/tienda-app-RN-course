@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    // fontWeight: 'bold', //lo quitaqmos para usar la font personalizada
+    fontFamily: 'KanitBold',
     lineHeight: 32,
   },
   subtitle: {
