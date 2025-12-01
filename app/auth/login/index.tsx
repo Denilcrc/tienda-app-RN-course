@@ -21,7 +21,7 @@ const LoginScreen = () => {
   const onLogin = async() => {
   
     const { email, password } = form;
-    console.log({email, password});
+    // console.log({email, password});
 
     if(email.length === 0 || password.length === 0) {
       Alert.alert('Error', 'Ingrese su correo y contraseña');

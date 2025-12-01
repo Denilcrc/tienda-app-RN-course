@@ -3,7 +3,7 @@ import { useAuthStore } from "@/presentation/auth/store/useAuthStore";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
 import { Redirect, Stack } from "expo-router";
 import React, { useEffect } from "react";
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View } from "react-native";
 
 // ? este layout se encargara de verificar si el usuario esta autenticado o no
 const CheckAuthenticationLayout = () => {
@@ -36,17 +36,21 @@ const CheckAuthenticationLayout = () => {
         contentStyle: { backgroundColor: backgroundColor },
       }}
     >
-        <Stack.Screen 
-            name="(home)/index"
-            options={{
-              title: "Productos",
-              headerLeft: () => <LogoutIconButton />,
-            }}
-        />
-
+      <Stack.Screen
+        name="(home)/index"
+        options={{
+          title: "Productos",
+          headerLeft: () => <LogoutIconButton />,
+        }}
+      />
+      <Stack.Screen
+        name="product/[id]"
+        options={{
+          title: "Producto",
+        }}
+      />
     </Stack>
   );
-
 };
 
 export default CheckAuthenticationLayout;
