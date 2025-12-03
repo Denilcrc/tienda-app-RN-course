@@ -1,6 +1,7 @@
 import { updateCreateProduct } from "@/core/products/actions/create-update-product.action"
 import { getProductById } from "@/core/products/actions/get-product-by-id.actions"
 import { Product } from "@/core/products/interfaces/product.interface"
+import { useCameraStore } from "@/presentation/store/useCameraStore"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
 import { Alert } from "react-native"
@@ -8,6 +9,7 @@ import { Alert } from "react-native"
 
 export const useProduct = (productId: string) => {
 
+    const {clearImages} = useCameraStore()
     const queryClient = useQueryClient();
     const productRef = useRef(productId); //en algun momneto puede ser new / uuid
 
@@ -29,6 +31,8 @@ export const useProduct = (productId: string) => {
             // mantenemos la ref porque si se cliquea en guardar y el producto es nuevo, y si se vuelve a clicar en guardar se crearia otro producto nuevo
             productRef.current = data.id!;
 
+            clearImages(); //limpiamos las imagenes seleccionadas
+            
             // invalidar product query, para que se refresque
             queryClient.invalidateQueries({ queryKey: ["products", 'infinite'] }); //el querykey definido el useProducts
             queryClient.invalidateQueries({ queryKey: ["products", data.id] });

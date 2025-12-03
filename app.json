@@ -39,7 +39,16 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Permitir acceso a la galeria de fotos",
+          "savePhotosPermission": "Permitir guardar fotos en la galeria",
+          "isAccessMediaLocationEnabled": true,
+          "granularPermissions": ["audio", "photo"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

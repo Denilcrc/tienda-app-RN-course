@@ -1,30 +1,46 @@
 import { Size } from "@/core/products/interfaces/product.interface";
 import ProductImages from "@/presentation/products/components/ProductImages";
 import { useProduct } from "@/presentation/products/hooks/useProduct";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
+import MenuIconButton from "@/presentation/theme/components/MenuIconButton";
 import { ThemedView } from "@/presentation/theme/components/themed-view";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemeButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
-import { Ionicons } from "@expo/vector-icons";
-import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
+import { Redirect, router, useLocalSearchParams, useNavigation } from "expo-router";
 import { Formik } from "formik";
 import { useEffect } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  RefreshControl,
   ScrollView,
   View
 } from "react-native";
 
 const ProductIdScreen = () => {
+
+  const {selectedImage, clearImages} = useCameraStore()
+
   const navigation = useNavigation();
   const { id } = useLocalSearchParams();
 
   const { productQuery, productMutation } = useProduct(id as string);
 
+  // limpiando images para que no vayan a otro producto
+  useEffect(() => {
+    return () => {
+      clearImages();
+    }
+  }, [])
+  
+
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Ionicons name="camera-outline" size={25} />,
+      headerRight: () => <MenuIconButton 
+        onPress={() => router.push('/camera')}
+        icon="camera-outline"
+      />,
     });
   }, [productQuery.data]);
 
@@ -53,7 +69,10 @@ const ProductIdScreen = () => {
   return (
     <Formik
       initialValues={product}
-      onSubmit={(productLike) => productMutation.mutate(productLike)} 
+      onSubmit={(productLike) => productMutation.mutate({
+        ...productLike,
+        images: [...productLike.images, ...selectedImage] //añadimos las imagenes seleccionadas desde la app
+      })} 
     >
       {(
         { values, handleChange, handleBlur, handleSubmit, setFieldValue } //esto es para obtener los valores y funciones de formik si las necesitamos
@@ -62,9 +81,18 @@ const ProductIdScreen = () => {
           // behavior={Platform.OS === "ios" ? "padding" : undefined} //esto es para que en ios no tape el teclado los inputs
           behavior="padding"
         >
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={productQuery.isFetching} 
+                onRefresh={async() => {
+                  await productQuery.refetch();
+                }}
+              />
+            }
+          >
             {/* Product Images */}
-            <ProductImages images={values.images} />
+            <ProductImages images={[...values.images, ...selectedImage]} />
 
             {/* inputs formulario */}
             <ThemedView style={{ marginHorizontal: 10, marginTop: 20 }}>
